@@ -1,29 +1,30 @@
-;; title: stackin
-;; version:
-;; summary:
-;; description:
+;; title: StackInsure Main Contract
+;; version: 1.0.0
+;; summary: Main entry point for StackInsure system
+;; description: This is a placeholder contract for the StackInsure system
 
-;; traits
-;;
+;; This contract serves as the main entry point
+;; All functionality is implemented in separate contracts:
+;; - policy-registry.clar
+;; - premium-calculator.clar
+;; - liquidity-pool.clar
+;; - claims-processing.clar
+;; - voting.clar
+;; - oracle-integration.clar
+;; - staking.clar
 
-;; token definitions
-;;
+(define-constant CONTRACT_VERSION (u1))
 
-;; constants
-;;
+(define-data-var initialized bool false)
 
-;; data vars
-;;
+(define-public (initialize)
+  (begin
+    (var-set initialized true)
+    (ok true)
+  )
+)
 
-;; data maps
-;;
-
-;; public functions
-;;
-
-;; read only functions
-;;
-
-;; private functions
-;;
+(define-read-only (is-initialized)
+  (ok (var-get initialized))
+)
 
