@@ -8,7 +8,7 @@
 (define-constant STATUS_CANCELLED (u3))
 (define-constant STATUS_CLAIMED (u4))
 
-(define-data-var contract-owner principal tx-sender)
+(define-data-var contract-owner (optional principal) none)
 
 ;; Policy data structure
 (define-data-var next-policy-id uint u1)
@@ -101,7 +101,8 @@
     (
       (policy (unwrap! (map-get? policy-map { policy-id: policy-id }) (err u1006)))
     )
-    (asserts! (is-eq tx-sender (var-get contract-owner)) (err u1007))
+    (asserts! (is-some (var-get contract-owner)) (err u1010))
+    (asserts! (is-eq tx-sender (unwrap! (var-get contract-owner) (err u1012))) (err u1007))
     (try! (map-set policy-map
       {
         policy-id: policy-id

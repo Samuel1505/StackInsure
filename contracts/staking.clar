@@ -17,7 +17,16 @@
 (define-constant REWARD_RATE_BASE (u100))
 (define-constant REWARD_DECIMALS (u10000))
 
-(define-data-var contract-owner principal tx-sender)
+(define-data-var contract-owner (optional principal) none)
+
+;; Set contract owner (can only be called once)
+(define-public (set-contract-owner (owner principal))
+  (begin
+    (asserts! (is-none (var-get contract-owner)) (err u7019))
+    (var-set contract-owner (some owner))
+    (ok true)
+  )
+)
 
 (define-data-var total-staked uint u0)
 (define-data-var total-rewards-distributed uint u0)
@@ -235,7 +244,8 @@
       (pool-id (var-get next-pool-id))
       (current-time (unwrap! (get-block-info? time (unwrap! (get-block-height?))) (err u7001)))
     )
-    (asserts! (is-eq tx-sender (var-get contract-owner)) (err u7015))
+    (asserts! (is-some (var-get contract-owner)) (err u7020))
+    (asserts! (is-eq tx-sender (unwrap! (var-get contract-owner) (err u7021))) (err u7015))
     (asserts! (> total-amount u0) (err u7016))
     (try! (map-set reward-pool
       { pool-id: pool-id }
@@ -253,7 +263,8 @@
 ;; Update reward rate (owner only)
 (define-public (update-reward-rate (new-rate uint))
   (begin
-    (asserts! (is-eq tx-sender (var-get contract-owner)) (err u7015))
+    (asserts! (is-some (var-get contract-owner)) (err u7020))
+    (asserts! (is-eq tx-sender (unwrap! (var-get contract-owner) (err u7021))) (err u7015))
     (asserts! (>= new-rate u0) (err u7017))
     (asserts! (<= new-rate u1000) (err u7018))
     (var-set reward-rate new-rate)

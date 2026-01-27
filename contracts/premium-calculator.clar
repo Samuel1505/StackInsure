@@ -18,7 +18,16 @@
 (define-constant RISK_CATEGORY_HIGH (string-ascii 20 "high"))
 (define-constant RISK_CATEGORY_VERY_HIGH (string-ascii 20 "very_high"))
 
-(define-data-var contract-owner principal tx-sender)
+(define-data-var contract-owner (optional principal) none)
+
+;; Set contract owner (can only be called once)
+(define-public (set-contract-owner (owner principal))
+  (begin
+    (asserts! (is-none (var-get contract-owner)) (err u2007))
+    (var-set contract-owner (some owner))
+    (ok true)
+  )
+)
 
 (define-map risk-factors
   { risk-category: (string-ascii 20) }
@@ -33,7 +42,8 @@
 ;; Initialize risk factors
 (define-public (initialize-risk-factors)
   (begin
-    (asserts! (is-eq tx-sender (var-get contract-owner)) (err u2001))
+    (asserts! (is-some (var-get contract-owner)) (err u2008))
+    (asserts! (is-eq tx-sender (unwrap! (var-get contract-owner) (err u2009))) (err u2001))
     (try! (map-set risk-factors
       { risk-category: RISK_CATEGORY_LOW }
       { multiplier: LOW_RISK_MULTIPLIER, base-rate: BASE_PREMIUM_RATE }
@@ -104,7 +114,8 @@
     (
       (risk-factor (unwrap! (map-get? risk-factors { risk-category: risk-category }) (err u2002)))
     )
-    (asserts! (is-eq tx-sender (var-get contract-owner)) (err u2004))
+    (asserts! (is-some (var-get contract-owner)) (err u2010))
+    (asserts! (is-eq tx-sender (unwrap! (var-get contract-owner) (err u2011))) (err u2004))
     (asserts! (>= new-multiplier u5000) (err u2005))
     (asserts! (<= new-multiplier u50000) (err u2006))
     (try! (map-set risk-factors

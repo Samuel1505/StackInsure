@@ -19,7 +19,16 @@
 ;; Minimum votes required
 (define-constant MIN_VOTES_REQUIRED (u3))
 
-(define-data-var contract-owner principal tx-sender)
+(define-data-var contract-owner (optional principal) none)
+
+;; Set contract owner (can only be called once)
+(define-public (set-contract-owner (owner principal))
+  (begin
+    (asserts! (is-none (var-get contract-owner)) (err u5011))
+    (var-set contract-owner (some owner))
+    (ok true)
+  )
+)
 
 (define-data-var next-voting-session-id uint u1)
 
@@ -80,7 +89,8 @@
 ;; Set voter weight (owner only)
 (define-public (set-voter-weight (voter principal) (weight uint))
   (begin
-    (asserts! (is-eq tx-sender (var-get contract-owner)) (err u5001))
+    (asserts! (is-some (var-get contract-owner)) (err u5012))
+    (asserts! (is-eq tx-sender (unwrap! (var-get contract-owner) (err u5013))) (err u5001))
     (asserts! (> weight u0) (err u5002))
     (try! (map-set voter-weights { voter: voter } weight))
     (ok true)
@@ -99,7 +109,8 @@
       (current-block (unwrap! (get-block-height?) (err u5003)))
       (end-block (+ current-block (if (>= voting-period MIN_VOTING_PERIOD) voting-period DEFAULT_VOTING_PERIOD)))
     )
-    (asserts! (is-eq tx-sender (var-get contract-owner)) (err u5001))
+    (asserts! (is-some (var-get contract-owner)) (err u5012))
+    (asserts! (is-eq tx-sender (unwrap! (var-get contract-owner) (err u5013))) (err u5001))
     (asserts! (> quorum u0) (err u5004))
     (try! (map-set voting-sessions
       { session-id: session-id }
@@ -199,7 +210,8 @@
         VOTE_ABSTAIN
       ))
     )
-    (asserts! (is-eq tx-sender (var-get contract-owner)) (err u5001))
+    (asserts! (is-some (var-get contract-owner)) (err u5012))
+    (asserts! (is-eq tx-sender (unwrap! (var-get contract-owner) (err u5013))) (err u5001))
     (asserts! (is-eq (get status session) VOTING_OPEN) (err u5006))
     (asserts! (or
       (> current-block (get end-block session))

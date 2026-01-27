@@ -10,7 +10,16 @@
 (define-constant WITHDRAWAL_APPROVED (u2))
 (define-constant WITHDRAWAL_REJECTED (u3))
 
-(define-data-var contract-owner principal tx-sender)
+(define-data-var contract-owner (optional principal) none)
+
+;; Set contract owner (can only be called once)
+(define-public (set-contract-owner (owner principal))
+  (begin
+    (asserts! (is-none (var-get contract-owner)) (err u3011))
+    (var-set contract-owner (some owner))
+    (ok true)
+  )
+)
 
 (define-data-var total-liquidity uint u0)
 (define-data-var total-reserved uint u0)
@@ -128,7 +137,8 @@
       (request (unwrap! (map-get? withdrawal-requests { request-id: request-id }) (err u3006)))
       (balance (unwrap! (map-get? underwriter-balances { underwriter: (get underwriter request) }) (err u3002)))
     )
-    (asserts! (is-eq tx-sender (var-get contract-owner)) (err u3007))
+    (asserts! (is-some (var-get contract-owner)) (err u3012))
+    (asserts! (is-eq tx-sender (unwrap! (var-get contract-owner) (err u3013))) (err u3007))
     (asserts! (is-eq (get status request) WITHDRAWAL_PENDING) (err u3008))
     (try! (map-set withdrawal-requests
       { request-id: request-id }
@@ -161,7 +171,8 @@
       (request (unwrap! (map-get? withdrawal-requests { request-id: request-id }) (err u3006)))
       (balance (unwrap! (map-get? underwriter-balances { underwriter: (get underwriter request) }) (err u3002)))
     )
-    (asserts! (is-eq tx-sender (var-get contract-owner)) (err u3007))
+    (asserts! (is-some (var-get contract-owner)) (err u3012))
+    (asserts! (is-eq tx-sender (unwrap! (var-get contract-owner) (err u3013))) (err u3007))
     (asserts! (is-eq (get status request) WITHDRAWAL_PENDING) (err u3008))
     (try! (map-set withdrawal-requests
       { request-id: request-id }
@@ -231,7 +242,8 @@
     (
       (balance (unwrap! (map-get? underwriter-balances { underwriter: underwriter }) (err u3002)))
     )
-    (asserts! (is-eq tx-sender (var-get contract-owner)) (err u3007))
+    (asserts! (is-some (var-get contract-owner)) (err u3012))
+    (asserts! (is-eq tx-sender (unwrap! (var-get contract-owner) (err u3013))) (err u3007))
     (try! (map-set underwriter-balances
       { underwriter: underwriter }
       {

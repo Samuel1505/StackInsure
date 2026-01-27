@@ -14,7 +14,16 @@
 (define-constant DATA_STATUS_VERIFIED (u2))
 (define-constant DATA_STATUS_INVALID (u3))
 
-(define-data-var contract-owner principal tx-sender)
+(define-data-var contract-owner (optional principal) none)
+
+;; Set contract owner (can only be called once)
+(define-public (set-contract-owner (owner principal))
+  (begin
+    (asserts! (is-none (var-get contract-owner)) (err u6012))
+    (var-set contract-owner (some owner))
+    (ok true)
+  )
+)
 
 (define-data-var next-request-id uint u1)
 
@@ -79,7 +88,8 @@
     (
       (existing-provider (map-get? oracle-providers { provider: provider }))
     )
-    (asserts! (is-eq tx-sender (var-get contract-owner)) (err u6001))
+    (asserts! (is-some (var-get contract-owner)) (err u6013))
+    (asserts! (is-eq tx-sender (unwrap! (var-get contract-owner) (err u6014))) (err u6001))
     (try! (map-set oracle-providers
       { provider: provider }
       {
@@ -188,7 +198,8 @@
     (
       (request (unwrap! (map-get? oracle-requests { request-id: request-id }) (err u6005)))
     )
-    (asserts! (is-eq tx-sender (var-get contract-owner)) (err u6001))
+    (asserts! (is-some (var-get contract-owner)) (err u6013))
+    (asserts! (is-eq tx-sender (unwrap! (var-get contract-owner) (err u6014))) (err u6001))
     (asserts! (is-eq (get status request) DATA_STATUS_VERIFIED) (err u6009))
     (try! (map-set oracle-requests
       { request-id: request-id }
@@ -244,7 +255,8 @@
         (- (get reputation provider-info) (unwrap-panic (int-to-uint (* reputation-change (to-int u-1)))))
       ))
     )
-    (asserts! (is-eq tx-sender (var-get contract-owner)) (err u6001))
+    (asserts! (is-some (var-get contract-owner)) (err u6013))
+    (asserts! (is-eq tx-sender (unwrap! (var-get contract-owner) (err u6014))) (err u6001))
     (asserts! (> new-reputation u0) (err u6010))
     (try! (map-set oracle-providers
       { provider: provider }
@@ -265,7 +277,8 @@
     (
       (provider-info (unwrap! (map-get? oracle-providers { provider: provider }) (err u6006)))
     )
-    (asserts! (is-eq tx-sender (var-get contract-owner)) (err u6001))
+    (asserts! (is-some (var-get contract-owner)) (err u6013))
+    (asserts! (is-eq tx-sender (unwrap! (var-get contract-owner) (err u6014))) (err u6001))
     (try! (map-set oracle-providers
       { provider: provider }
       {

@@ -12,7 +12,16 @@
 ;; Minimum claim amount
 (define-constant MIN_CLAIM_AMOUNT (u1000))
 
-(define-data-var contract-owner principal tx-sender)
+(define-data-var contract-owner (optional principal) none)
+
+;; Set contract owner (can only be called once)
+(define-public (set-contract-owner (owner principal))
+  (begin
+    (asserts! (is-none (var-get contract-owner)) (err u4011))
+    (var-set contract-owner (some owner))
+    (ok true)
+  )
+)
 
 (define-data-var next-claim-id uint u1)
 
@@ -125,7 +134,8 @@
         (get resolved-at claim)
       ))
     )
-    (asserts! (is-eq tx-sender (var-get contract-owner)) (err u4005))
+    (asserts! (is-some (var-get contract-owner)) (err u4012))
+    (asserts! (is-eq tx-sender (unwrap! (var-get contract-owner) (err u4013))) (err u4005))
     (asserts! (is-eq (get status claim) CLAIM_STATUS_SUBMITTED) (err u4006))
     (try! (map-set claims
       { claim-id: claim-id }
@@ -151,7 +161,8 @@
     (
       (claim (unwrap! (map-get? claims { claim-id: claim-id }) (err u4004)))
     )
-    (asserts! (is-eq tx-sender (var-get contract-owner)) (err u4005))
+    (asserts! (is-some (var-get contract-owner)) (err u4012))
+    (asserts! (is-eq tx-sender (unwrap! (var-get contract-owner) (err u4013))) (err u4005))
     (asserts! (is-eq (get status claim) CLAIM_STATUS_UNDER_REVIEW) (err u4007))
     (try! (update-claim-status claim-id CLAIM_STATUS_APPROVED))
     (ok (emit-event claim-approved claim-id (get claim-amount claim)))
@@ -167,7 +178,8 @@
     (
       (claim (unwrap! (map-get? claims { claim-id: claim-id }) (err u4004)))
     )
-    (asserts! (is-eq tx-sender (var-get contract-owner)) (err u4005))
+    (asserts! (is-some (var-get contract-owner)) (err u4012))
+    (asserts! (is-eq tx-sender (unwrap! (var-get contract-owner) (err u4013))) (err u4005))
     (asserts! (or
       (is-eq (get status claim) CLAIM_STATUS_SUBMITTED)
       (is-eq (get status claim) CLAIM_STATUS_UNDER_REVIEW)
@@ -183,7 +195,8 @@
     (
       (claim (unwrap! (map-get? claims { claim-id: claim-id }) (err u4004)))
     )
-    (asserts! (is-eq tx-sender (var-get contract-owner)) (err u4005))
+    (asserts! (is-some (var-get contract-owner)) (err u4012))
+    (asserts! (is-eq tx-sender (unwrap! (var-get contract-owner) (err u4013))) (err u4005))
     (asserts! (is-eq (get status claim) CLAIM_STATUS_SUBMITTED) (err u4009))
     (try! (update-claim-status claim-id CLAIM_STATUS_UNDER_REVIEW))
     (ok true)
@@ -196,7 +209,8 @@
     (
       (claim (unwrap! (map-get? claims { claim-id: claim-id }) (err u4004)))
     )
-    (asserts! (is-eq tx-sender (var-get contract-owner)) (err u4005))
+    (asserts! (is-some (var-get contract-owner)) (err u4012))
+    (asserts! (is-eq tx-sender (unwrap! (var-get contract-owner) (err u4013))) (err u4005))
     (asserts! (is-eq (get status claim) CLAIM_STATUS_APPROVED) (err u4010))
     (try! (update-claim-status claim-id CLAIM_STATUS_PAID))
     (ok true)
