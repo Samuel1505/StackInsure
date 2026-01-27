@@ -1,0 +1,60 @@
+---
+id: 0
+name: Mainnet deployment
+network: mainnet
+stacks-node: "https://api.hiro.so"
+bitcoin-node: "http://blockstack:blockstacksystem@bitcoin.blockstack.com:8332"
+plan:
+  batches:
+    - id: 0
+      transactions:
+        - contract-publish:
+            contract-name: claims-processing
+            expected-sender: SP1ZE73TWJ4WBFHZBBQJAMJDV23K678RXWPDGNHYF
+            cost: 71620
+            path: contracts/claims-processing.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: liquidity-pool
+            expected-sender: SP1ZE73TWJ4WBFHZBBQJAMJDV23K678RXWPDGNHYF
+            cost: 80490
+            path: contracts/liquidity-pool.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: oracle-integration
+            expected-sender: SP1ZE73TWJ4WBFHZBBQJAMJDV23K678RXWPDGNHYF
+            cost: 88240
+            path: contracts/oracle-integration.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: policy-registry
+            expected-sender: SP1ZE73TWJ4WBFHZBBQJAMJDV23K678RXWPDGNHYF
+            cost: 46450
+            path: contracts/policy-registry.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: premium-calculator
+            expected-sender: SP1ZE73TWJ4WBFHZBBQJAMJDV23K678RXWPDGNHYF
+            cost: 51150
+            path: contracts/premium-calculator.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: staking
+            expected-sender: SP1ZE73TWJ4WBFHZBBQJAMJDV23K678RXWPDGNHYF
+            cost: 91730
+            path: contracts/staking.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: voting
+            expected-sender: SP1ZE73TWJ4WBFHZBBQJAMJDV23K678RXWPDGNHYF
+            cost: 83760
+            path: contracts/voting.clar
+            anchor-block-only: true
+            clarity-version: 4
+      epoch: "3.3"
