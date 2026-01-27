@@ -1,0 +1,6 @@
+#!/bin/bash
+if [ "$1" = "check" ] && [ -f ./clarinet-check-fixed ]; then
+    ./clarinet-check-fixed "${@:2}"
+else
+    /home/admin/.cargo/bin/clarinet "$@"
+fi

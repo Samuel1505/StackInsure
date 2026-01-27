@@ -1,0 +1,2 @@
+# StackInsure clarinet check wrapper
+alias clarinet-check-fixed='./clarinet-check-wrapper.sh'

@@ -1,0 +1,4 @@
+[contracts.test]
+path = "/tmp/test_batch.clar"
+clarity_version = 4
+epoch = "latest"

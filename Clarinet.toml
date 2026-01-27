@@ -5,8 +5,38 @@ authors = []
 telemetry = true
 cache_dir = './.cache'
 requirements = []
-[contracts.stackin]
-path = 'contracts/stackin.clar'
+[contracts.policy-registry]
+path = 'contracts/policy-registry.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.premium-calculator]
+path = 'contracts/premium-calculator.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.liquidity-pool]
+path = 'contracts/liquidity-pool.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.claims-processing]
+path = 'contracts/claims-processing.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.voting]
+path = 'contracts/voting.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.oracle-integration]
+path = 'contracts/oracle-integration.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.staking]
+path = 'contracts/staking.clar'
 clarity_version = 4
 epoch = 'latest'
 [repl.analysis]
