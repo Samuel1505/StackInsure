@@ -251,8 +251,8 @@
     (
       (provider-info (unwrap! (map-get? oracle-providers { provider: provider }) (err u6006)))
       (new-reputation (if (>= reputation-change (to-int u0))
-        (+ (get reputation provider-info) (unwrap-panic (int-to-uint reputation-change)))
-        (- (get reputation provider-info) (unwrap-panic (int-to-uint (* reputation-change (to-int u-1)))))
+        (+ (get reputation provider-info) (unwrap! (int-to-uint reputation-change) (err u6015)))
+        (- (get reputation provider-info) (unwrap! (int-to-uint (* reputation-change (to-int u-1))) (err u6016)))
       ))
     )
     (asserts! (is-some (var-get contract-owner)) (err u6013))
