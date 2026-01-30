@@ -5,9 +5,9 @@
  * and @stacks/transactions libraries with StackInsure
  */
 
-import { StackInsureIntegration, NetworkType } from './stackinsure-integration';
-import { WalletConnectionManager } from './stacks-connect';
-import { TransactionBuilder, ClarityValueHelpers } from './stacks-transactions';
+import { StackInsureIntegration } from './stackinsure-integration';
+import { WalletConnectionManager, NetworkType } from './stacks-connect';
+import { TransactionBuilder } from './stacks-transactions';
 
 /**
  * Example 1: Basic Wallet Connection
@@ -156,7 +156,7 @@ export async function exampleProgrammaticTransactions() {
   // This example shows how to use @stacks/transactions directly
   // for programmatic transactions (e.g., in a backend service)
 
-  const txBuilder = new TransactionBuilder(NetworkType.TESTNET);
+  // const txBuilder = new TransactionBuilder(NetworkType.TESTNET);
 
   // Example: Call contract function programmatically
   // const senderKey = 'your-private-key-here'; // NEVER expose in frontend!
@@ -190,7 +190,7 @@ export async function exampleCompleteWorkflow() {
   // Step 1: Connect wallet
   console.log('Step 1: Connecting wallet...');
   await stackInsure.connectWallet(
-    (data) => {
+    () => {
       console.log('✓ Wallet connected');
     },
     () => {
