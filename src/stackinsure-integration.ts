@@ -11,15 +11,10 @@ import {
 } from './stacks-connect';
 import {
   TransactionBuilder,
-  ClarityValueHelpers,
-  buildContractCall,
-  broadcastTx,
   callReadOnly,
 } from './stacks-transactions';
 import {
   openContractCall,
-  openSTXTransfer,
-  finished,
 } from '@stacks/connect';
 import {
   AnchorMode,
@@ -28,7 +23,6 @@ import {
   uintCV,
   stringAsciiCV,
   bufferCV,
-  createAssetInfo,
 } from '@stacks/transactions';
 
 /**
@@ -155,12 +149,11 @@ export class StackInsureIntegration {
         name: 'StackInsure',
         icon: window.location.origin + '/icon-192x192.png',
       },
-      network: this.walletManager.getAppConfig().network,
+      network: (this.walletManager.getAppConfig() as any).network,
       anchorMode: AnchorMode.Any,
       postConditionMode: PostConditionMode.Deny,
       onFinish: (data) => {
         console.log('Premium calculation transaction:', data);
-        finished(data);
       },
       onCancel: () => {
         console.log('User cancelled premium calculation');
@@ -199,12 +192,11 @@ export class StackInsureIntegration {
         name: 'StackInsure',
         icon: window.location.origin + '/icon-192x192.png',
       },
-      network: this.walletManager.getAppConfig().network,
+      network: (this.walletManager.getAppConfig() as any).network,
       anchorMode: AnchorMode.Any,
       postConditionMode: PostConditionMode.Deny,
       onFinish: (data) => {
         console.log('Policy creation transaction:', data);
-        finished(data);
       },
       onCancel: () => {
         console.log('User cancelled policy creation');
@@ -231,12 +223,11 @@ export class StackInsureIntegration {
         name: 'StackInsure',
         icon: window.location.origin + '/icon-192x192.png',
       },
-      network: this.walletManager.getAppConfig().network,
+      network: (this.walletManager.getAppConfig() as any).network,
       anchorMode: AnchorMode.Any,
       postConditionMode: PostConditionMode.Deny,
       onFinish: (data) => {
         console.log('Liquidity deposit transaction:', data);
-        finished(data);
       },
       onCancel: () => {
         console.log('User cancelled liquidity deposit');
@@ -273,12 +264,11 @@ export class StackInsureIntegration {
         name: 'StackInsure',
         icon: window.location.origin + '/icon-192x192.png',
       },
-      network: this.walletManager.getAppConfig().network,
+      network: (this.walletManager.getAppConfig() as any).network,
       anchorMode: AnchorMode.Any,
       postConditionMode: PostConditionMode.Deny,
       onFinish: (data) => {
         console.log('Claim submission transaction:', data);
-        finished(data);
       },
       onCancel: () => {
         console.log('User cancelled claim submission');
