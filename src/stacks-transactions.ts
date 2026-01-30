@@ -12,7 +12,6 @@ import {
   makeContractCall,
   makeContractDeploy,
   makeSTXTransfer,
-  createAssetInfo,
   createAddress,
   getAddressFromPrivateKey,
   TransactionVersion,
