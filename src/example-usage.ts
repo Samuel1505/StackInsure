@@ -7,7 +7,7 @@
 
 import { StackInsureIntegration } from './stackinsure-integration';
 import { WalletConnectionManager, NetworkType } from './stacks-connect';
-import { TransactionBuilder } from './stacks-transactions';
+// import { TransactionBuilder } from './stacks-transactions'; // Used in commented example
 
 /**
  * Example 1: Basic Wallet Connection
