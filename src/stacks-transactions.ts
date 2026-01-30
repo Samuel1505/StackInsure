@@ -116,13 +116,16 @@ export async function buildContractCall(
   } = params;
 
   const network = options.network || getNetwork(NetworkType.TESTNET);
-  const senderAddress = getAddressFromPrivateKey(senderKey, TransactionVersion.Testnet);
+  // Determine transaction version from network
+  const txVersion = network.isMainnet() ? 0x00 : 0x80;
+  const senderAddress = getAddressFromPrivateKey(senderKey, txVersion);
 
   // Get nonce if not provided
   let nonce = options.nonce;
   if (nonce === undefined) {
     // Fetch nonce from network API
-    const response = await fetch(`${network.getCoreApiUrl()}/v2/accounts/${senderAddress}?proof=0`);
+    const apiUrl = network.coreApiUrl;
+    const response = await fetch(`${apiUrl}/v2/accounts/${senderAddress}?proof=0`);
     const account = await response.json();
     nonce = account.nonce || 0;
   }
@@ -159,13 +162,16 @@ export async function buildContractDeploy(
   } = params;
 
   const network = options.network || getNetwork(NetworkType.TESTNET);
-  const senderAddress = getAddressFromPrivateKey(senderKey, TransactionVersion.Testnet);
+  // Determine transaction version from network
+  const txVersion = network.isMainnet() ? 0x00 : 0x80;
+  const senderAddress = getAddressFromPrivateKey(senderKey, txVersion);
 
   // Get nonce if not provided
   let nonce = options.nonce;
   if (nonce === undefined) {
     // Fetch nonce from network API
-    const response = await fetch(`${network.getCoreApiUrl()}/v2/accounts/${senderAddress}?proof=0`);
+    const apiUrl = network.coreApiUrl;
+    const response = await fetch(`${apiUrl}/v2/accounts/${senderAddress}?proof=0`);
     const account = await response.json();
     nonce = account.nonce || 0;
   }
@@ -199,13 +205,16 @@ export async function buildSTXTransfer(
   } = params;
 
   const network = options.network || getNetwork(NetworkType.TESTNET);
-  const senderAddress = getAddressFromPrivateKey(senderKey, TransactionVersion.Testnet);
+  // Determine transaction version from network
+  const txVersion = network.isMainnet() ? 0x00 : 0x80;
+  const senderAddress = getAddressFromPrivateKey(senderKey, txVersion);
 
   // Get nonce if not provided
   let nonce = options.nonce;
   if (nonce === undefined) {
     // Fetch nonce from network API
-    const response = await fetch(`${network.getCoreApiUrl()}/v2/accounts/${senderAddress}?proof=0`);
+    const apiUrl = network.coreApiUrl;
+    const response = await fetch(`${apiUrl}/v2/accounts/${senderAddress}?proof=0`);
     const account = await response.json();
     nonce = account.nonce || 0;
   }
@@ -233,7 +242,6 @@ export async function broadcastTx(
   transaction: any,
   network?: StacksNetwork
 ): Promise<any> {
-  const stacksNetwork = network || getNetwork(NetworkType.TESTNET);
   // broadcastTransaction takes the transaction which already has network info
   return await broadcastTransaction(transaction);
 }
@@ -256,7 +264,7 @@ export async function callReadOnly(
   const stacksNetwork = network || getNetwork(NetworkType.TESTNET);
   const sender = senderAddress || createAddress(contractAddress);
 
-  return await fetchReadOnlyFunctionCall({
+  return await fetchCallReadOnlyFunction({
     contractAddress,
     contractName,
     functionName,
