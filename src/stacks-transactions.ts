@@ -30,13 +30,11 @@ import {
   responseErrorCV,
   someCV,
   noneCV,
-  callReadOnlyFunction,
   cvToJSON,
   cvToValue,
-  getNonce,
-  estimateTransfer,
-  estimateContractFunctionCall,
-  estimateContractDeploy,
+} from '@stacks/transactions';
+import {
+  fetchReadOnlyFunctionCall,
 } from '@stacks/transactions';
 import {
   StacksMainnet,
@@ -119,7 +117,7 @@ export async function buildContractCall(
   } = params;
 
   const network = options.network || getNetwork(NetworkType.TESTNET);
-  const senderAddress = getAddressFromPrivateKey(senderKey, network.version);
+  const senderAddress = getAddressFromPrivateKey(senderKey, TransactionVersion.Testnet);
 
   // Get nonce if not provided
   let nonce = options.nonce;
@@ -159,7 +157,7 @@ export async function buildContractDeploy(
   } = params;
 
   const network = options.network || getNetwork(NetworkType.TESTNET);
-  const senderAddress = getAddressFromPrivateKey(senderKey, network.version);
+  const senderAddress = getAddressFromPrivateKey(senderKey, TransactionVersion.Testnet);
 
   // Get nonce if not provided
   let nonce = options.nonce;
@@ -196,7 +194,7 @@ export async function buildSTXTransfer(
   } = params;
 
   const network = options.network || getNetwork(NetworkType.TESTNET);
-  const senderAddress = getAddressFromPrivateKey(senderKey, network.version);
+  const senderAddress = getAddressFromPrivateKey(senderKey, TransactionVersion.Testnet);
 
   // Get nonce if not provided
   let nonce = options.nonce;
