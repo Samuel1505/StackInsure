@@ -257,7 +257,7 @@ export async function callReadOnly(
   const stacksNetwork = network || getNetwork(NetworkType.TESTNET);
   const sender = senderAddress || createAddress(contractAddress);
 
-  return await callReadOnlyFunction({
+  return await fetchReadOnlyFunctionCall({
     contractAddress,
     contractName,
     functionName,
