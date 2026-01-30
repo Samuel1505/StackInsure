@@ -36,10 +36,7 @@ import {
   fetchCallReadOnlyFunction,
 } from '@stacks/transactions';
 import {
-  StacksMainnet,
-  StacksTestnet,
   StacksNetwork,
-  StacksDevnet,
 } from '@stacks/network';
 import { NetworkType, getNetwork } from './stacks-connect';
 
@@ -116,15 +113,17 @@ export async function buildContractCall(
   } = params;
 
   const network = options.network || getNetwork(NetworkType.TESTNET);
-  // Determine transaction version from network
-  const txVersion = network.isMainnet() ? 0x00 : 0x80;
+  // Determine transaction version from network (mainnet = 0x00, testnet/devnet = 0x80)
+  const networkType = (network as any).version || (network as any).chainId;
+  const isMainnet = networkType === 'mainnet' || networkType === 0x00000001;
+  const txVersion = isMainnet ? 'mainnet' : 'testnet';
   const senderAddress = getAddressFromPrivateKey(senderKey, txVersion);
 
   // Get nonce if not provided
   let nonce = options.nonce;
   if (nonce === undefined) {
     // Fetch nonce from network API
-    const apiUrl = network.coreApiUrl;
+    const apiUrl = (network as any).coreApiUrl || ((network as any).getCoreApiUrl?.() || 'https://api.testnet.hiro.so');
     const response = await fetch(`${apiUrl}/v2/accounts/${senderAddress}?proof=0`);
     const account = await response.json();
     nonce = account.nonce || 0;
@@ -162,15 +161,17 @@ export async function buildContractDeploy(
   } = params;
 
   const network = options.network || getNetwork(NetworkType.TESTNET);
-  // Determine transaction version from network
-  const txVersion = network.isMainnet() ? 0x00 : 0x80;
+  // Determine transaction version from network (mainnet = 0x00, testnet/devnet = 0x80)
+  const networkType = (network as any).version || (network as any).chainId;
+  const isMainnet = networkType === 'mainnet' || networkType === 0x00000001;
+  const txVersion = isMainnet ? 'mainnet' : 'testnet';
   const senderAddress = getAddressFromPrivateKey(senderKey, txVersion);
 
   // Get nonce if not provided
   let nonce = options.nonce;
   if (nonce === undefined) {
     // Fetch nonce from network API
-    const apiUrl = network.coreApiUrl;
+    const apiUrl = (network as any).coreApiUrl || ((network as any).getCoreApiUrl?.() || 'https://api.testnet.hiro.so');
     const response = await fetch(`${apiUrl}/v2/accounts/${senderAddress}?proof=0`);
     const account = await response.json();
     nonce = account.nonce || 0;
@@ -205,15 +206,17 @@ export async function buildSTXTransfer(
   } = params;
 
   const network = options.network || getNetwork(NetworkType.TESTNET);
-  // Determine transaction version from network
-  const txVersion = network.isMainnet() ? 0x00 : 0x80;
+  // Determine transaction version from network (mainnet = 0x00, testnet/devnet = 0x80)
+  const networkType = (network as any).version || (network as any).chainId;
+  const isMainnet = networkType === 'mainnet' || networkType === 0x00000001;
+  const txVersion = isMainnet ? 'mainnet' : 'testnet';
   const senderAddress = getAddressFromPrivateKey(senderKey, txVersion);
 
   // Get nonce if not provided
   let nonce = options.nonce;
   if (nonce === undefined) {
     // Fetch nonce from network API
-    const apiUrl = network.coreApiUrl;
+    const apiUrl = (network as any).coreApiUrl || ((network as any).getCoreApiUrl?.() || 'https://api.testnet.hiro.so');
     const response = await fetch(`${apiUrl}/v2/accounts/${senderAddress}?proof=0`);
     const account = await response.json();
     nonce = account.nonce || 0;
@@ -239,8 +242,7 @@ export async function buildSTXTransfer(
  * Broadcast transaction
  */
 export async function broadcastTx(
-  transaction: any,
-  network?: StacksNetwork
+  transaction: any
 ): Promise<any> {
   // broadcastTransaction takes the transaction which already has network info
   return await broadcastTransaction(transaction);
@@ -270,7 +272,7 @@ export async function callReadOnly(
     functionName,
     functionArgs,
     network: stacksNetwork,
-    senderAddress: sender,
+    senderAddress: typeof sender === 'string' ? sender : sender.address,
   });
 }
 
