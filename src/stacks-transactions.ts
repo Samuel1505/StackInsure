@@ -264,7 +264,7 @@ export async function callReadOnly(
   } = params;
 
   const stacksNetwork = network || getNetwork(NetworkType.TESTNET);
-  const sender = senderAddress || createAddress(contractAddress);
+  const sender = senderAddress || contractAddress;
 
   return await fetchCallReadOnlyFunction({
     contractAddress,
@@ -272,7 +272,7 @@ export async function callReadOnly(
     functionName,
     functionArgs,
     network: stacksNetwork,
-    senderAddress: typeof sender === 'string' ? sender : sender.address,
+    senderAddress: sender,
   });
 }
 
@@ -282,8 +282,7 @@ export async function callReadOnly(
  * You may need to use the network API or set fees manually
  */
 export async function estimateFee(
-  transaction: any,
-  network?: StacksNetwork
+  transaction: any
 ): Promise<bigint> {
   // Fee estimation requires network API calls
   // For now, return a default fee or use the transaction's fee if set
