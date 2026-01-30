@@ -11,7 +11,7 @@ import {
   broadcastTransaction,
   makeContractCall,
   makeContractDeploy,
-  makeSTXTransfer,
+  makeSTXTokenTransfer,
   createAddress,
   getAddressFromPrivateKey,
   TransactionVersion,
@@ -217,7 +217,7 @@ export async function buildSTXTransfer(
     sponsored: options.sponsored || false,
   };
 
-  return await makeSTXTransfer(txOptions);
+  return await makeSTXTokenTransfer(txOptions);
 }
 
 /**
