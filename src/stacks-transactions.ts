@@ -12,7 +12,6 @@ import {
   makeContractCall,
   makeContractDeploy,
   makeSTXTokenTransfer,
-  createAddress,
   getAddressFromPrivateKey,
   ClarityValue,
   uintCV,
@@ -343,7 +342,7 @@ export class TransactionBuilder {
       ...params,
       options: { ...this.defaultOptions, ...options },
     });
-    return await broadcastTx(transaction, this.network);
+    return await broadcastTx(transaction);
   }
 
   /**
@@ -357,7 +356,7 @@ export class TransactionBuilder {
       ...params,
       options: { ...this.defaultOptions, ...options },
     });
-    return await broadcastTx(transaction, this.network);
+    return await broadcastTx(transaction);
   }
 
   /**
@@ -371,7 +370,7 @@ export class TransactionBuilder {
       ...params,
       options: { ...this.defaultOptions, ...options },
     });
-    return await broadcastTx(transaction, this.network);
+    return await broadcastTx(transaction);
   }
 
   /**
