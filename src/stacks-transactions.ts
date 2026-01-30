@@ -122,7 +122,10 @@ export async function buildContractCall(
   // Get nonce if not provided
   let nonce = options.nonce;
   if (nonce === undefined) {
-    nonce = await getNonce(senderAddress, network);
+    // Fetch nonce from network API
+    const response = await fetch(`${network.getCoreApiUrl()}/v2/accounts/${senderAddress}?proof=0`);
+    const account = await response.json();
+    nonce = account.nonce || 0;
   }
 
   const txOptions = {
@@ -162,7 +165,10 @@ export async function buildContractDeploy(
   // Get nonce if not provided
   let nonce = options.nonce;
   if (nonce === undefined) {
-    nonce = await getNonce(senderAddress, network);
+    // Fetch nonce from network API
+    const response = await fetch(`${network.getCoreApiUrl()}/v2/accounts/${senderAddress}?proof=0`);
+    const account = await response.json();
+    nonce = account.nonce || 0;
   }
 
   const txOptions = {
@@ -199,7 +205,10 @@ export async function buildSTXTransfer(
   // Get nonce if not provided
   let nonce = options.nonce;
   if (nonce === undefined) {
-    nonce = await getNonce(senderAddress, network);
+    // Fetch nonce from network API
+    const response = await fetch(`${network.getCoreApiUrl()}/v2/accounts/${senderAddress}?proof=0`);
+    const account = await response.json();
+    nonce = account.nonce || 0;
   }
 
   const txOptions = {
@@ -226,7 +235,8 @@ export async function broadcastTx(
   network?: StacksNetwork
 ): Promise<any> {
   const stacksNetwork = network || getNetwork(NetworkType.TESTNET);
-  return await broadcastTransaction(transaction, stacksNetwork);
+  // broadcastTransaction takes the transaction which already has network info
+  return await broadcastTransaction(transaction);
 }
 
 /**
